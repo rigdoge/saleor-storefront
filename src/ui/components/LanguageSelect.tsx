@@ -2,25 +2,20 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import type { Locale } from "@/lib/i18n/config";
 
-interface Channel {
-	id: string;
-	name: string;
-	slug: string;
-	currencyCode: string;
-}
-
-export const ChannelSelect = ({ channels, className = "" }: { channels: Channel[]; className?: string }) => {
+export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 	const router = useRouter();
-	const params = useParams<{ channel: string }>();
+	const params = useParams<{ channel: string; locale: string }>();
 	const [isOpen, setIsOpen] = useState(false);
-	const currentChannel = channels.find((ch) => ch.slug === params.channel);
 
-	// Close dropdown when clicking outside
+	const currentLocale = params.locale?.toLowerCase() || "en";
+	const currentLanguage = languages.find((lang) => lang.code === currentLocale) || languages[0];
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			const target = event.target as HTMLElement;
-			if (!target.closest(".channel-select")) {
+			if (!target.closest(".language-select")) {
 				setIsOpen(false);
 			}
 		};
@@ -29,21 +24,26 @@ export const ChannelSelect = ({ channels, className = "" }: { channels: Channel[
 		return () => document.removeEventListener("click", handleClickOutside);
 	}, []);
 
-	const handleChannelChange = (slug: string) => {
+	const handleLanguageChange = (code: string) => {
 		setIsOpen(false);
-		router.push(`/${slug}`);
+		const targetChannel = params.channel || "default-channel";
+		router.push(`/${targetChannel}/${code}`);
 	};
 
+	if (!languages.length) {
+		return null;
+	}
+
 	return (
-		<div className={`channel-select relative ${className}`}>
+		<div className="language-select relative">
 			<button
 				className="flex min-w-[120px] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black"
 				onClick={() => setIsOpen(!isOpen)}
-				aria-label="Select Channel"
+				aria-label="Select Language"
 			>
 				<div className="flex items-center gap-2">
-					<span className="text-neutral-600">Channel:</span>
-					<span className="font-semibold">{currentChannel?.currencyCode || "Select"}</span>
+					<span className="text-neutral-600">Language:</span>
+					<span className="font-semibold">{currentLanguage?.local || "Select"}</span>
 				</div>
 				<svg
 					className={`h-4 w-4 transform transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -55,24 +55,24 @@ export const ChannelSelect = ({ channels, className = "" }: { channels: Channel[
 				</svg>
 			</button>
 
-			{isOpen && (
+			{isOpen && languages.length > 0 && (
 				<div className="absolute right-0 mt-2 w-56 rounded-md border border-neutral-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
 					<div className="py-1">
-						{channels.map((channel) => (
+						{languages.map((language) => (
 							<button
-								key={channel.id}
+								key={language.code}
 								className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-neutral-50 
-									${channel.slug === params.channel ? "bg-neutral-100 font-medium" : ""}`}
-								onClick={() => handleChannelChange(channel.slug)}
+                  ${language.code === currentLocale ? "bg-neutral-100 font-medium" : ""}`}
+								onClick={() => handleLanguageChange(language.code)}
 							>
 								<div className="flex items-center justify-between">
-									<span className="font-medium">{channel.name}</span>
+									<span className="font-medium">{language.local}</span>
 									<span
 										className={`ml-2 text-sm ${
-											channel.slug === params.channel ? "text-black" : "text-neutral-500"
+											language.code === currentLocale ? "text-black" : "text-neutral-500"
 										}`}
 									>
-										{channel.currencyCode}
+										{language.name}
 									</span>
 								</div>
 							</button>

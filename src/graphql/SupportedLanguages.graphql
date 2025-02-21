@@ -1,0 +1,8 @@
+query GetSupportedLanguages {
+	shop {
+		languages {
+			code
+			language
+		}
+	}
+}
