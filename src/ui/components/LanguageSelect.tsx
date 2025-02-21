@@ -9,7 +9,7 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 	const params = useParams<{ channel: string; locale: string }>();
 	const [isOpen, setIsOpen] = useState(false);
 
-	const currentLocale = params.locale?.toLowerCase() || "en";
+	const currentLocale = params.locale?.toUpperCase() || "EN";
 	const currentLanguage = languages.find((lang) => lang.code === currentLocale) || languages[0];
 
 	useEffect(() => {
@@ -27,7 +27,11 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 	const handleLanguageChange = (code: string) => {
 		setIsOpen(false);
 		const targetChannel = params.channel || "default-channel";
-		router.push(`/${targetChannel}/${code}`);
+		if (code === "EN") {
+			router.push(`/${targetChannel}`);
+		} else {
+			router.push(`/${targetChannel}/${code.toLowerCase()}`);
+		}
 	};
 
 	if (!languages.length) {
@@ -43,7 +47,7 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 			>
 				<div className="flex items-center gap-2">
 					<span className="text-neutral-600">Language:</span>
-					<span className="font-semibold">{currentLanguage?.local || "Select"}</span>
+					<span className="font-semibold">{currentLanguage?.local || "English"}</span>
 				</div>
 				<svg
 					className={`h-4 w-4 transform transition-transform ${isOpen ? "rotate-180" : ""}`}
