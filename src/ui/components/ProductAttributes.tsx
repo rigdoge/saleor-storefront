@@ -1,6 +1,6 @@
 interface AttributeValue {
 	id: string;
-	name: string;
+	name?: string | null;
 	translation?: {
 		id: string;
 		name: string;
@@ -10,7 +10,7 @@ interface AttributeValue {
 interface Attribute {
 	attribute: {
 		id: string;
-		name: string;
+		name?: string | null;
 		translation?: {
 			id: string;
 			name: string;
@@ -20,7 +20,7 @@ interface Attribute {
 }
 
 interface ProductAttributesProps {
-	attributes: Attribute[];
+	attributes?: Attribute[];
 	variantAttributes?: Attribute[];
 	className?: string;
 }
@@ -65,7 +65,7 @@ export const ProductAttributes = ({
 
 	return (
 		<div className={`space-y-6 ${className}`}>
-			{renderAttributeGroup(attributes, "Product Specifications")}
+			{renderAttributeGroup(attributes || [], "Product Specifications")}
 			{renderAttributeGroup(variantAttributes || [], "Variant Options")}
 		</div>
 	);

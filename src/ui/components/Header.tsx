@@ -2,13 +2,10 @@ import { Logo } from "./Logo";
 import { Nav } from "./nav/Nav";
 import { ChannelSelect } from "./ChannelSelect";
 import { LanguageSelect } from "./LanguageSelect";
-import { executeGraphQL } from "@/lib/graphql";
-import { ChannelsListDocument } from "@/gql/graphql";
-import { getChannelLocales } from "@/lib/i18n/config";
 
 export async function Header({ channel }: { channel: string }) {
-	// 获取 channels 数据
-	const defaultChannels = [
+	// 默认渠道列表
+	const activeChannels = [
 		{
 			id: "default-channel",
 			name: "Default Channel",
@@ -29,23 +26,6 @@ export async function Header({ channel }: { channel: string }) {
 		},
 	];
 
-	let activeChannels = defaultChannels;
-
-	try {
-		const channelsData = await executeGraphQL(ChannelsListDocument, {
-			withAuth: false,
-		});
-
-		if (channelsData?.channels?.length > 0) {
-			activeChannels = channelsData.channels.filter((ch) => ch.isActive);
-		}
-	} catch (error) {
-		console.error("Failed to fetch channels:", error);
-	}
-
-	// 获取语言列表
-	const languages = await getChannelLocales(channel);
-
 	return (
 		<header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md">
 			<div className="mx-auto max-w-7xl px-3 sm:px-8">
@@ -53,7 +33,7 @@ export async function Header({ channel }: { channel: string }) {
 					<Logo />
 					<Nav channel={channel} />
 					<div className="flex items-center gap-2">
-						<LanguageSelect languages={languages} />
+						<LanguageSelect />
 						<ChannelSelect channels={activeChannels} className="ml-2" />
 					</div>
 				</div>

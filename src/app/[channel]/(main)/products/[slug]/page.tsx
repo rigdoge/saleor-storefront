@@ -14,6 +14,7 @@ import {
 	CheckoutAddLineDocument,
 	ProductDetailsMultilingualDocument,
 	ProductListDocument,
+	LanguageCodeEnum,
 } from "@/gql/graphql";
 import * as Checkout from "@/lib/checkout";
 import { AvailabilityMessage } from "@/ui/components/AvailabilityMessage";
@@ -33,7 +34,7 @@ export async function generateMetadata(
 		variables: {
 			slug: decodeURIComponent(params.slug),
 			channel: params.channel,
-			languageCode: "EN",
+			languageCode: LanguageCodeEnum.En,
 		},
 		revalidate: 60,
 	});
@@ -91,7 +92,7 @@ export default async function Page({
 		variables: {
 			slug: decodeURIComponent(params.slug),
 			channel: params.channel,
-			languageCode: "EN",
+			languageCode: LanguageCodeEnum.En,
 		},
 		revalidate: 60,
 	});
