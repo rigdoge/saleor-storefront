@@ -2,15 +2,13 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import type { Locale } from "@/lib/i18n/config";
 
-export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
+export const LanguageSelect = () => {
 	const router = useRouter();
 	const params = useParams<{ channel: string; locale: string }>();
 	const [isOpen, setIsOpen] = useState(false);
 
 	const currentLocale = params.locale?.toUpperCase() || "EN";
-	const currentLanguage = languages.find((lang) => lang.code === currentLocale) || languages[0];
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -34,9 +32,15 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 		}
 	};
 
-	if (!languages.length) {
-		return null;
-	}
+	// 简化的语言选项
+	const languageOptions = [
+		{ code: "EN", name: "English" },
+		{ code: "ZH_HANS", name: "简体中文" },
+		{ code: "ES", name: "Español" },
+		{ code: "JA", name: "日本語" },
+	];
+
+	const currentLanguage = languageOptions.find((lang) => lang.code === currentLocale) || languageOptions[0];
 
 	return (
 		<div className="language-select relative">
@@ -45,10 +49,7 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 				onClick={() => setIsOpen(!isOpen)}
 				aria-label="Select Language"
 			>
-				<div className="flex items-center gap-2">
-					<span className="text-neutral-600">Language:</span>
-					<span className="font-semibold">{currentLanguage?.local || "English"}</span>
-				</div>
+				<span className="font-semibold">{currentLanguage.name}</span>
 				<svg
 					className={`h-4 w-4 transform transition-transform ${isOpen ? "rotate-180" : ""}`}
 					fill="none"
@@ -59,26 +60,17 @@ export const LanguageSelect = ({ languages }: { languages: Locale[] }) => {
 				</svg>
 			</button>
 
-			{isOpen && languages.length > 0 && (
-				<div className="absolute right-0 mt-2 w-56 rounded-md border border-neutral-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+			{isOpen && (
+				<div className="absolute right-0 mt-2 w-32 rounded-md border border-neutral-200 bg-white shadow-lg">
 					<div className="py-1">
-						{languages.map((language) => (
+						{languageOptions.map((language) => (
 							<button
 								key={language.code}
-								className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-neutral-50 
-                  ${language.code === currentLocale ? "bg-neutral-100 font-medium" : ""}`}
+								className={`block w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 
+									${language.code === currentLocale ? "bg-neutral-100 font-medium" : ""}`}
 								onClick={() => handleLanguageChange(language.code)}
 							>
-								<div className="flex items-center justify-between">
-									<span className="font-medium">{language.local}</span>
-									<span
-										className={`ml-2 text-sm ${
-											language.code === currentLocale ? "text-black" : "text-neutral-500"
-										}`}
-									>
-										{language.name}
-									</span>
-								</div>
+								{language.name}
 							</button>
 						))}
 					</div>
