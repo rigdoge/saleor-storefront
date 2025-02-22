@@ -10,9 +10,14 @@ import { VariantSelector } from "@/ui/components/VariantSelector";
 import { ProductImageWrapper } from "@/ui/atoms/ProductImageWrapper";
 import { executeGraphQL } from "@/lib/graphql";
 import { formatMoney, formatMoneyRange } from "@/lib/utils";
-import { CheckoutAddLineDocument, ProductDetailsDocument, ProductListDocument } from "@/gql/graphql";
+import {
+	CheckoutAddLineDocument,
+	ProductDetailsMultilingualDocument,
+	ProductListDocument,
+} from "@/gql/graphql";
 import * as Checkout from "@/lib/checkout";
 import { AvailabilityMessage } from "@/ui/components/AvailabilityMessage";
+import { ProductAttributes } from "@/ui/components/ProductAttributes";
 
 export async function generateMetadata(
 	{
@@ -24,10 +29,11 @@ export async function generateMetadata(
 	},
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { product } = await executeGraphQL(ProductDetailsDocument, {
+	const { product } = await executeGraphQL(ProductDetailsMultilingualDocument, {
 		variables: {
 			slug: decodeURIComponent(params.slug),
 			channel: params.channel,
+			languageCode: "EN",
 		},
 		revalidate: 60,
 	});
@@ -56,7 +62,7 @@ export async function generateMetadata(
 							alt: product.name,
 						},
 					],
-			  }
+				}
 			: null,
 	};
 }
@@ -81,10 +87,11 @@ export default async function Page({
 	params: { slug: string; channel: string };
 	searchParams: { variant?: string };
 }) {
-	const { product } = await executeGraphQL(ProductDetailsDocument, {
+	const { product } = await executeGraphQL(ProductDetailsMultilingualDocument, {
 		variables: {
 			slug: decodeURIComponent(params.slug),
 			channel: params.channel,
+			languageCode: "EN",
 		},
 		revalidate: 60,
 	});
@@ -132,11 +139,11 @@ export default async function Page({
 	const price = selectedVariant?.pricing?.price?.gross
 		? formatMoney(selectedVariant.pricing.price.gross.amount, selectedVariant.pricing.price.gross.currency)
 		: isAvailable
-		  ? formatMoneyRange({
+			? formatMoneyRange({
 					start: product?.pricing?.priceRange?.start?.gross,
 					stop: product?.pricing?.priceRange?.stop?.gross,
-		    })
-		  : "";
+				})
+			: "";
 
 	const productJsonLd: WithContext<Product> = {
 		"@context": "https://schema.org",
@@ -154,7 +161,7 @@ export default async function Page({
 						priceCurrency: selectedVariant.pricing?.price?.gross.currency,
 						price: selectedVariant.pricing?.price?.gross.amount,
 					},
-			  }
+				}
 			: {
 					name: product.name,
 
@@ -168,7 +175,7 @@ export default async function Page({
 						lowPrice: product.pricing?.priceRange?.start?.gross.amount,
 						highPrice: product.pricing?.priceRange?.stop?.gross.amount,
 					},
-			  }),
+				}),
 	};
 
 	return (
@@ -212,6 +219,14 @@ export default async function Page({
 						<div className="mt-8">
 							<AddButton disabled={!selectedVariantID || !selectedVariant?.quantityAvailable} />
 						</div>
+
+						<div className="mt-8 border-t border-neutral-200 pt-8">
+							<ProductAttributes
+								attributes={product.attributes}
+								variantAttributes={selectedVariant?.attributes}
+							/>
+						</div>
+
 						{description && (
 							<div className="mt-8 space-y-6 text-sm text-neutral-500">
 								{description.map((content) => (

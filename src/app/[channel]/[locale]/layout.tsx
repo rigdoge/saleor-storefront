@@ -14,8 +14,12 @@ export default async function LocaleLayout({
 		notFound();
 	}
 
+	// 将语言代码转换为小写用于 HTML lang 属性
+	const htmlLang = locale.toLowerCase();
+	const isRTL = htmlLang === "ar"; // 阿拉伯语是从右到左的文字
+
 	return (
-		<div lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
+		<div lang={htmlLang} dir={isRTL ? "rtl" : "ltr"}>
 			{children}
 		</div>
 	);
@@ -24,16 +28,19 @@ export default async function LocaleLayout({
 // 生成静态路由参数
 export async function generateStaticParams() {
 	// 获取所有 channel 的语言组合
-	const channels = ["default-channel", "channel-pln", "channel-china"];
+	const channels = ["default-channel", "channel-pln", "channel-china", "channel-asia", "channel-europe"];
 	const params = [];
 
 	for (const channel of channels) {
 		const locales = await getChannelLocales(channel);
 		for (const locale of locales) {
-			params.push({
-				channel,
-				locale: locale.code,
-			});
+			// 如果是默认语言(EN)，不生成带语言代码的路由
+			if (locale.code !== "EN") {
+				params.push({
+					channel,
+					locale: locale.code.toLowerCase(),
+				});
+			}
 		}
 	}
 
