@@ -1,6 +1,6 @@
 {
 	"name": "saleor-storefront",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"private": true,
 	"type": "module",
 	"license": "BSD-3-Clause",
@@ -13,7 +13,8 @@
 		"lint": "next lint --dir src --fix",
 		"generate": "graphql-codegen --config .graphqlrc.ts",
 		"prepare": "husky install",
-		"test": "playwright test"
+		"test": "playwright test",
+		"analyze": "ANALYZE=true pnpm build"
 	},
 	"dependencies": {
 		"@adyen/adyen-web": "5.53.3",
@@ -52,6 +53,7 @@
 		"@graphql-codegen/cli": "5.0.0",
 		"@graphql-codegen/client-preset": "4.1.0",
 		"@graphql-typed-document-node/core": "3.2.0",
+		"@next/bundle-analyzer": "15.1.7",
 		"@next/env": "14.0.4",
 		"@parcel/watcher": "2.3.0",
 		"@playwright/test": "1.40.1",
