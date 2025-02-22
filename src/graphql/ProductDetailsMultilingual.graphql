@@ -25,18 +25,45 @@ query ProductDetailsMultilingual($slug: String!, $channel: String!, $languageCod
 				name
 			}
 		}
+		attributes {
+			attribute {
+				id
+				name
+				translation(languageCode: $languageCode) {
+					id
+					name
+				}
+			}
+			values {
+				id
+				name
+				translation(languageCode: $languageCode) {
+					id
+					name
+				}
+			}
+		}
 		variants {
-			id
-			name
+			...VariantDetails
 			translation(languageCode: $languageCode) {
 				id
 				name
 			}
-			pricing {
-				price {
-					gross {
-						amount
-						currency
+			attributes {
+				attribute {
+					id
+					name
+					translation(languageCode: $languageCode) {
+						id
+						name
+					}
+				}
+				values {
+					id
+					name
+					translation(languageCode: $languageCode) {
+						id
+						name
 					}
 				}
 			}
