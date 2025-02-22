@@ -36,7 +36,9 @@ export default function RootLayout(props: { children: ReactNode }) {
 				<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 				<link rel="apple-touch-icon" href="/icon.svg" />
 			</head>
-			<body className={`${inter.className} min-h-dvh`}>
+			<body
+				className={`${inter.className} min-h-dvh bg-white text-black dark:bg-neutral-900 dark:text-white`}
+			>
 				{children}
 				<DraftModeNotification />
 			</body>

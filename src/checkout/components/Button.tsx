@@ -22,11 +22,11 @@ export const Button: FC<ButtonProps> = ({
 	const classes = clsx(
 		"inline-flex h-10 items-center justify-center whitespace-nowrap rounded border active:outline-none",
 		{
-			"bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-700 text-white px-4 aria-disabled:cursor-not-allowed aria-disabled:opacity-70 hover:aria-disabled:bg-neutral-700":
+			"bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-700 text-white px-4 aria-disabled:cursor-not-allowed aria-disabled:opacity-70 hover:aria-disabled:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:disabled:bg-neutral-300 dark:hover:aria-disabled:bg-neutral-300":
 				variant === "primary",
-			"border-neutral-600 hover:border-neutral-700 hover:bg-neutral-300 active:bg-neutral-300 disabled:border-neutral-300 aria-disabled:border-neutral-300 bg-transparent disabled:bg-transparent aria-disabled:bg-transparent px-4":
+			"border-neutral-600 hover:border-neutral-700 hover:bg-neutral-300 active:bg-neutral-300 disabled:border-neutral-300 aria-disabled:border-neutral-300 bg-transparent disabled:bg-transparent aria-disabled:bg-transparent px-4 dark:border-neutral-400 dark:hover:border-neutral-300 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 dark:text-neutral-300":
 				variant === "secondary",
-			"h-auto border-none bg-transparent p-0": variant === "tertiary",
+			"h-auto border-none bg-transparent p-0 dark:text-neutral-300": variant === "tertiary",
 		},
 		className,
 	);

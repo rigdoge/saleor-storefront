@@ -12,7 +12,7 @@ export function AddButton({ disabled }: { disabled?: boolean }) {
 			aria-disabled={isButtonDisabled}
 			aria-busy={pending}
 			onClick={(e) => isButtonDisabled && e.preventDefault()}
-			className="h-12 items-center rounded-md bg-neutral-900 px-6 py-3 text-base font-medium leading-6 text-white shadow hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70 hover:disabled:bg-neutral-700 aria-disabled:cursor-not-allowed aria-disabled:opacity-70 hover:aria-disabled:bg-neutral-700"
+			className="h-12 items-center rounded-md bg-neutral-900 px-6 py-3 text-base font-medium leading-6 text-white shadow hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70 hover:disabled:bg-neutral-700 aria-disabled:cursor-not-allowed aria-disabled:opacity-70 hover:aria-disabled:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:disabled:bg-neutral-300 dark:hover:disabled:bg-neutral-300 dark:aria-disabled:bg-neutral-300 dark:hover:aria-disabled:bg-neutral-300"
 		>
 			{pending ? (
 				<div className="inline-flex items-center">

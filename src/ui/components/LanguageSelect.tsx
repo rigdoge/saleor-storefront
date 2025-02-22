@@ -45,7 +45,7 @@ export const LanguageSelect = () => {
 	return (
 		<div className="language-select relative">
 			<button
-				className="flex min-w-[120px] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black"
+				className="flex min-w-[120px] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
 				onClick={() => setIsOpen(!isOpen)}
 				aria-label="Select Language"
 			>
@@ -61,13 +61,13 @@ export const LanguageSelect = () => {
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 mt-2 w-32 rounded-md border border-neutral-200 bg-white shadow-lg">
+				<div className="absolute right-0 mt-2 w-32 rounded-md border border-neutral-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
 					<div className="py-1">
 						{languageOptions.map((language) => (
 							<button
 								key={language.code}
-								className={`block w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 
-									${language.code === currentLocale ? "bg-neutral-100 font-medium" : ""}`}
+								className={`block w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 dark:text-white dark:hover:bg-neutral-700
+									${language.code === currentLocale ? "bg-neutral-100 font-medium dark:bg-neutral-700" : ""}`}
 								onClick={() => handleLanguageChange(language.code)}
 							>
 								{language.name}

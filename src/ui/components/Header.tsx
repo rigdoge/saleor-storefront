@@ -2,6 +2,7 @@ import { Logo } from "./Logo";
 import { Nav } from "./nav/Nav";
 import { ChannelSelect } from "./ChannelSelect";
 import { LanguageSelect } from "./LanguageSelect";
+import { ThemeToggle } from "./ThemeToggle";
 
 export async function Header({ channel }: { channel: string }) {
 	// 默认渠道列表
@@ -27,12 +28,13 @@ export async function Header({ channel }: { channel: string }) {
 	];
 
 	return (
-		<header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md">
+		<header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md dark:bg-neutral-800/50">
 			<div className="mx-auto max-w-7xl px-3 sm:px-8">
 				<div className="flex h-16 items-center justify-between gap-4 md:gap-8">
 					<Logo />
 					<Nav channel={channel} />
 					<div className="flex items-center gap-2">
+						<ThemeToggle />
 						<LanguageSelect />
 						<ChannelSelect channels={activeChannels} className="ml-2" />
 					</div>

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import edjsHTML from "editorjs-html";
 import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
@@ -6,19 +7,20 @@ import xss from "xss";
 import { invariant } from "ts-invariant";
 import { type WithContext, type Product } from "schema-dts";
 import { AddButton } from "./AddButton";
-import { VariantSelector } from "@/ui/components/VariantSelector";
-import { ProductImageWrapper } from "@/ui/atoms/ProductImageWrapper";
-import { executeGraphQL } from "@/lib/graphql";
-import { formatMoney, formatMoneyRange } from "@/lib/utils";
 import {
 	CheckoutAddLineDocument,
 	ProductDetailsMultilingualDocument,
 	ProductListDocument,
 	LanguageCodeEnum,
+	type ProductListItemFragment,
 } from "@/gql/graphql";
+import { executeGraphQL } from "@/lib/graphql";
+import { formatMoney, formatMoneyRange } from "@/lib/utils";
 import * as Checkout from "@/lib/checkout";
+import { VariantSelector } from "@/ui/components/VariantSelector";
 import { AvailabilityMessage } from "@/ui/components/AvailabilityMessage";
 import { ProductAttributes } from "@/ui/components/ProductAttributes";
+import { ProductGallery } from "@/ui/components/ProductGallery";
 
 export async function generateMetadata(
 	{
@@ -81,6 +83,42 @@ export async function generateStaticParams({ params }: { params: { channel: stri
 
 const parser = edjsHTML();
 
+async function ProductVariants({
+	product,
+	channel,
+	searchParams,
+}: {
+	product: ProductListItemFragment;
+	channel: string;
+	searchParams: { variant?: string };
+}) {
+	const { product: productDetails } = await executeGraphQL(ProductDetailsMultilingualDocument, {
+		variables: {
+			slug: decodeURIComponent(product.slug),
+			channel: channel,
+			languageCode: LanguageCodeEnum.En,
+		},
+		revalidate: 60,
+	});
+
+	if (!productDetails) {
+		notFound();
+	}
+
+	const variants = productDetails.variants;
+	const selectedVariantID = searchParams.variant;
+	const selectedVariant = variants?.find(({ id }) => id === selectedVariantID);
+
+	return (
+		<VariantSelector
+			variants={variants || []}
+			product={product}
+			selectedVariant={selectedVariant}
+			channel={channel}
+		/>
+	);
+}
+
 export default async function Page({
 	params,
 	searchParams,
@@ -123,16 +161,31 @@ export default async function Page({
 			return;
 		}
 
-		// TODO: error handling
-		await executeGraphQL(CheckoutAddLineDocument, {
-			variables: {
-				id: checkout.id,
-				productVariantId: decodeURIComponent(selectedVariantID),
-			},
-			cache: "no-cache",
-		});
+		try {
+			const result = await executeGraphQL(CheckoutAddLineDocument, {
+				variables: {
+					id: checkout.id,
+					productVariantId: decodeURIComponent(selectedVariantID),
+				},
+				cache: "no-cache",
+				headers: {
+					"Cache-Control": "no-cache, no-store, must-revalidate",
+					Pragma: "no-cache",
+					Expires: "0",
+				},
+			});
 
-		revalidatePath("/cart");
+			if (result.checkoutLinesAdd?.errors?.length) {
+				const errorMessage = result.checkoutLinesAdd.errors[0].message || "Failed to add item to cart";
+				throw new Error(errorMessage);
+			}
+
+			revalidatePath(`/${params.channel}/cart`, "page");
+			revalidatePath(`/${params.channel}`, "layout");
+		} catch (error) {
+			console.error("Failed to add item to cart:", error);
+			throw error;
+		}
 	}
 
 	const isAvailable = variants?.some((variant) => variant.quantityAvailable) ?? false;
@@ -165,7 +218,6 @@ export default async function Page({
 				}
 			: {
 					name: product.name,
-
 					description: product.seoDescription || product.name,
 					offers: {
 						"@type": "AggregateOffer",
@@ -189,39 +241,35 @@ export default async function Page({
 			/>
 			<form className="grid gap-2 sm:grid-cols-2 lg:grid-cols-8" action={addItem}>
 				<div className="md:col-span-1 lg:col-span-5">
-					{firstImage && (
-						<ProductImageWrapper
-							priority={true}
-							alt={firstImage.alt ?? ""}
-							width={1024}
-							height={1024}
-							src={firstImage.url}
-						/>
-					)}
+					{firstImage && <ProductGallery thumbnail={firstImage} media={product.media || []} />}
 				</div>
 				<div className="flex flex-col pt-6 sm:col-span-1 sm:px-6 sm:pt-0 lg:col-span-3 lg:pt-16">
 					<div>
-						<h1 className="mb-4 flex-auto text-3xl font-medium tracking-tight text-neutral-900">
+						<h1 className="mb-4 flex-auto text-3xl font-medium tracking-tight text-neutral-900 dark:text-white">
 							{product?.name}
 						</h1>
-						<p className="mb-8 text-sm " data-testid="ProductElement_Price">
+						<p
+							className="mb-8 text-sm text-neutral-500 dark:text-neutral-400"
+							data-testid="ProductElement_Price"
+						>
 							{price}
 						</p>
 
 						{variants && (
-							<VariantSelector
-								selectedVariant={selectedVariant}
-								variants={variants}
-								product={product}
-								channel={params.channel}
-							/>
+							<Suspense
+								fallback={
+									<VariantSelector variants={[]} product={product} channel={params.channel} loading={true} />
+								}
+							>
+								<ProductVariants product={product} channel={params.channel} searchParams={searchParams} />
+							</Suspense>
 						)}
 						<AvailabilityMessage isAvailable={isAvailable} />
 						<div className="mt-8">
 							<AddButton disabled={!selectedVariantID || !selectedVariant?.quantityAvailable} />
 						</div>
 
-						<div className="mt-8 border-t border-neutral-200 pt-8">
+						<div className="mt-8 border-t border-neutral-200 pt-8 dark:border-neutral-700">
 							<ProductAttributes
 								attributes={product.attributes}
 								variantAttributes={selectedVariant?.attributes}
@@ -229,7 +277,7 @@ export default async function Page({
 						</div>
 
 						{description && (
-							<div className="mt-8 space-y-6 text-sm text-neutral-500">
+							<div className="mt-8 space-y-6 text-sm text-neutral-500 dark:text-neutral-400">
 								{description.map((content) => (
 									<div key={content} dangerouslySetInnerHTML={{ __html: xss(content) }} />
 								))}

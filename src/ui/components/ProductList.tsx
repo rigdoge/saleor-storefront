@@ -1,7 +1,21 @@
 import { ProductElement } from "./ProductElement";
 import { type ProductListItemFragment } from "@/gql/graphql";
+import { Loader } from "@/ui/atoms/Loader";
 
-export const ProductList = ({ products }: { products: readonly ProductListItemFragment[] }) => {
+interface ProductListProps {
+	products: readonly ProductListItemFragment[];
+	loading?: boolean;
+}
+
+export const ProductList = ({ products, loading = false }: ProductListProps) => {
+	if (loading) {
+		return (
+			<div className="flex min-h-[300px] items-center justify-center">
+				<Loader size={15} color="currentColor" className="text-neutral-900 dark:text-white" />
+			</div>
+		);
+	}
+
 	return (
 		<ul
 			role="list"

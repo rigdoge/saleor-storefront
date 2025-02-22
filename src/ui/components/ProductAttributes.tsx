@@ -36,7 +36,10 @@ export const ProductAttributes = ({
 
 	const renderAttributeValue = (values: AttributeValue[]) => {
 		return values.map((value, index) => (
-			<span key={value.id} className="rounded-full bg-neutral-100 px-3 py-1 text-sm">
+			<span
+				key={value.id}
+				className="rounded-full bg-neutral-100 px-3 py-1 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+			>
 				{value.translation?.name || value.name}
 				{index < values.length - 1 ? ", " : ""}
 			</span>
@@ -48,11 +51,11 @@ export const ProductAttributes = ({
 
 		return (
 			<div className="space-y-2">
-				<h3 className="font-medium text-neutral-700">{title}</h3>
+				<h3 className="font-medium text-neutral-700 dark:text-neutral-300">{title}</h3>
 				<div className="space-y-3">
 					{attrs.map((attr) => (
 						<div key={attr.attribute.id} className="flex items-start gap-2">
-							<span className="min-w-[120px] text-sm text-neutral-600">
+							<span className="min-w-[120px] text-sm text-neutral-600 dark:text-neutral-400">
 								{attr.attribute.translation?.name || attr.attribute.name}:
 							</span>
 							<div className="flex flex-wrap gap-2">{renderAttributeValue(attr.values)}</div>

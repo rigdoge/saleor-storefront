@@ -23,7 +23,7 @@ export const TextInputComponent = <TName extends string>({
 	return (
 		<div className="space-y-0.5">
 			<label className="flex flex-col">
-				<span className="text-xs text-neutral-700">
+				<span className="text-xs text-neutral-700 dark:text-neutral-300">
 					{label}
 					{required && <span aria-hidden="true">*</span>}
 				</span>
@@ -33,13 +33,13 @@ export const TextInputComponent = <TName extends string>({
 					{...field}
 					{...props}
 					className={clsx(
-						"mt-0.5 w-full appearance-none rounded-md border-neutral-300 shadow-sm transition-colors focus:border-neutral-300 focus:outline-none focus:ring focus:ring-neutral-200 focus:ring-opacity-50 active:border-neutral-200 active:outline-none",
-						{ "border-red-300": error },
+						"mt-0.5 w-full appearance-none rounded-md border-neutral-300 bg-white shadow-sm transition-colors focus:border-neutral-300 focus:outline-none focus:ring focus:ring-neutral-200 focus:ring-opacity-50 active:border-neutral-200 active:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:border-neutral-600 dark:focus:ring-neutral-700 dark:active:border-neutral-600",
+						{ "border-red-300 dark:border-red-500": error },
 						props.className,
 					)}
 				/>
 			</label>
-			{error && <p className="text-sm text-red-500">{error}</p>}
+			{error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
 		</div>
 	);
 };

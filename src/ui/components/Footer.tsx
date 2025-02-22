@@ -17,19 +17,19 @@ export async function Footer({ channel }: { channel: string }) {
 					// and use app token instead
 					Authorization: `Bearer ${process.env.SALEOR_APP_TOKEN}`,
 				},
-		  })
+			})
 		: null;
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<footer className="border-neutral-300 bg-neutral-50">
+		<footer className="border-neutral-300 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900">
 			<div className="mx-auto max-w-7xl px-4 lg:px-8">
 				<div className="grid grid-cols-3 gap-8 py-16">
 					{footerLinks.menu?.items?.map((item) => {
 						return (
 							<div key={item.id}>
-								<h3 className="text-sm font-semibold text-neutral-900">{item.name}</h3>
-								<ul className="mt-4 space-y-4 [&>li]:text-neutral-500">
+								<h3 className="text-sm font-semibold text-neutral-900 dark:text-white">{item.name}</h3>
+								<ul className="mt-4 space-y-4 [&>li]:text-neutral-500 [&>li]:dark:text-neutral-400">
 									{item.children?.map((child) => {
 										if (child.category) {
 											return (
@@ -74,7 +74,7 @@ export async function Footer({ channel }: { channel: string }) {
 				</div>
 
 				{channels?.channels && (
-					<div className="mb-4 text-neutral-500">
+					<div className="mb-4 text-neutral-500 dark:text-neutral-400">
 						<label>
 							<span className="text-sm">Change currency:</span> <ChannelSelect channels={channels.channels} />
 						</label>

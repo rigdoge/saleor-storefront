@@ -37,12 +37,12 @@ export const ChannelSelect = ({ channels, className = "" }: { channels: Channel[
 	return (
 		<div className={`channel-select relative ${className}`}>
 			<button
-				className="flex min-w-[120px] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black"
+				className="flex min-w-[120px] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
 				onClick={() => setIsOpen(!isOpen)}
 				aria-label="Select Channel"
 			>
 				<div className="flex items-center gap-2">
-					<span className="text-neutral-600">Channel:</span>
+					<span className="text-neutral-600 dark:text-neutral-400">Channel:</span>
 					<span className="font-semibold">{currentChannel?.currencyCode || "Select"}</span>
 				</div>
 				<svg
@@ -56,20 +56,22 @@ export const ChannelSelect = ({ channels, className = "" }: { channels: Channel[
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 mt-2 w-56 rounded-md border border-neutral-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+				<div className="absolute right-0 mt-2 w-56 rounded-md border border-neutral-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:border-neutral-700 dark:bg-neutral-800">
 					<div className="py-1">
 						{channels.map((channel) => (
 							<button
 								key={channel.id}
-								className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-neutral-50 
-									${channel.slug === params.channel ? "bg-neutral-100 font-medium" : ""}`}
+								className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-neutral-50 dark:text-white dark:hover:bg-neutral-700
+									${channel.slug === params.channel ? "bg-neutral-100 font-medium dark:bg-neutral-700" : ""}`}
 								onClick={() => handleChannelChange(channel.slug)}
 							>
 								<div className="flex items-center justify-between">
 									<span className="font-medium">{channel.name}</span>
 									<span
 										className={`ml-2 text-sm ${
-											channel.slug === params.channel ? "text-black" : "text-neutral-500"
+											channel.slug === params.channel
+												? "text-black dark:text-white"
+												: "text-neutral-500 dark:text-neutral-400"
 										}`}
 									>
 										{channel.currencyCode}
